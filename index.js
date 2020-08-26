@@ -34,8 +34,9 @@ staffNamespace.on('connection', (socket) => {
     let type = creds.type;
 
     RATEOFT.joinStaff(name, type, socket.id);
-
-    fn({status: 'ok'});
+    if (fn) {
+        fn({status: 'ok'});
+    }
   });
 
   socket.on('order item ready', (guestId, orderItem) => {
