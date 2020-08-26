@@ -1,28 +1,28 @@
 # restaurant-rateofu-server
 
 
-WebSocket server
+## WebSocket server
 
 With `node index.js`, you'll start a websocket server listening on port 3000.
 
 The serves has two namespaces, which send and accept respective messages:
 
-Guest namespace (served on `/guest`)
+### Guest namespace (served on `/guest`)
 
-The server sends:
+#### The server sends:
 
 - `new order confirmed` message
 
 - `order refreshed` message
 
-The client can send:
+#### The client can send:
 
 - `new order`
   The payload is a list of objects with `title` and `qty` fields
 
-Staff namespace (served on `/staff`)
+### Staff namespace (served on `/staff`)
 
-The server sends:
+#### The server sends:
 
 - `new work order`
 
@@ -34,7 +34,7 @@ The server sends:
 
 - `order was served`
 
-The client can send:
+#### The client can send:
 
 - `login`
    The payload is an object with `name` and `type`; available types are: `waiter, barman, chef`
