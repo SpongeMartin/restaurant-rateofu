@@ -1,3 +1,28 @@
-.container {
+.beveragesWindow{
+  padding-left:4%;
+  width:40%;
+  display:inline-table;
+}
+.dishesWindow{
+  width:42%;
+  display:inline-table;
+  padding-left:14%;
+}
+.dish{
+  padding-bottom: 30px;
+}
+.beverage{
+  padding-bottom: 30px;
+}
+.inline-table{
+  display:inline-table;
+}
+.addbutton{
+  background-color: rgb(100, 162, 6);
+  color:aliceblue;
+  border-radius: 15%;
+  border-width: 0px;
   text-align: center;
+  width:25px;
+  height: 25px;
 }
