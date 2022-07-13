@@ -2,113 +2,133 @@ import './App.css';
 import io from 'socket.io-client';
 import React, {useState,useEffect} from 'react';
 import {BrowserRouter as Router, Route, Routes} from 'react-router-dom';
-import Beverages from './components/Beverages'
-import Dishes from './components/Dishes'
-import Order from './components/Order'
+import Beverages from './components/mainpath/Beverages'
+import Dishes from './components/mainpath/Dishes'
+import Order from './components/mainpath/Order'
+import FinalizedOrder from './components/waitingpath/FinalizedOrder';
+import Login from './components/Login';
 //import Addtask from './components/AddTask'
-let guest = io.connect("http://localhost:5000/guest")
+const guest = io.connect("http://localhost:5000/guest")
 
 
 
 function App() {
-  const [order,setOrder] = useState([])
-  const [dishes,setDishes] = useState([
+  const [location,setLocation] = useState(["/"])
+  const [items,setItems] = useState([
     {
       id:1,
-      name:"Grilled space-whale steak with algae puree",
+      title:"Grilled space-whale steak with algae puree",
+      type:"Food",
       price:"66.50€",
-      count:0
+      qty:0
     },
     {
       id:2,
-      name:"Hagro biscuit",
+      title:"Hagro biscuit",
+      type:"Food",
       price:"32.00€",
-      count:0
+      qty:0
     },
     {
       id:3,
-      name:"Ameglian Major Cow casserole",
+      title:"Ameglian Major Cow casserole",
+      type:"Food",
       price:"55.75€",
-      count:0
-    }
-  ])
-  const [beverages,setBeverages] = useState([
+      qty:0
+    },
     {
       id:4,
-      name:"Tea substitute",
+      title:"Tea substitute",
+      type:"Drink",
       price:"1.50€",
-      count:0
+      qty:0
     },
     {
       id:5,
-      name:"Pan Galactic Gargle Blaster",
+      title:"Pan Galactic Gargle Blaster",
+      type:"Drink",
       price:"5.50€",
-      count:0
+      qty:0
     },
     {
       id:6,
-      name:"Janx Spirit",
+      title:"Janx Spirit",
+      type:"Drink",
       price:"7.00€",
-      count:0
+      qty:0
     },
     {
       id:7,
-      name:"Tzjin-anthony-ks",
+      title:"Tzjin-anthony-ks",
+      type:"Drink",
       price:"11.50€",
-      count:0
+      qty:0
     }
   ])
+  
+  const [cost,setCost] = useState(0)
 
-  function contains(item){
-    console.log(order)
-    if(order.length<1) return false
-    return(order.filter((items)=>items.id === item.id ? true : false))
-  }
-
-  const addButton = (id,item) => {
-    if(id<dishes.length) setDishes(dishes.map((dish) => dish.id === id ? {...dish, count: dish.count+1} : dish))
-    else setBeverages(beverages.map((beverage) => beverage.id === id ? {...beverage, count: beverage.count+1} : beverage))
-    if(contains(item)) setOrder(order.map((items) => items.id === item.id ? {...items, count: items.count+1} : items))
-    else {
-      setOrder([...order,item])
-      console.log(order)
-    }
+  const addButton = (id) => {
+    setItems(items.map((item) => item.id === id ? {...item, qty: item.qty+1} : item))
+    let sum=0
+    items.forEach(element => {
+      let price = parseFloat(element.price.slice(0,-1))
+      sum += element.qty * price
+      if(id===element.id) sum += price
+    });
+    setCost(sum)
   }
 
   const substractButton = (id) =>{
-    if(id<dishes.length) setDishes(dishes.map((dish) => dish.id === id && dish.count >0 ? {...dish, count: dish.count-1} : dish))
-    else setBeverages(beverages.map((beverage) => beverage.id === id && beverage.count>0 ? {...beverage, count: beverage.count-1} : beverage))
+    setItems(items.map((item) => item.id === id && item.qty > 0 ? {...item, qty: item.qty-1} : item))
+    let sum=0
+    items.forEach(element => {
+      let price = parseFloat(element.price.slice(0,-1))
+      sum += element.qty * price
+      if(id===element.id) sum -= price
+    });
+    sum<0 ? setCost(0) : setCost(sum)
   }
 
   const deleteButton = (id) => {
-    if(id<dishes.length) setDishes(dishes.map((dish) => dish.id === id ? {...dish, count: 0} : dish))
-    else setBeverages(beverages.map((beverage) => beverage.id === id ? {...beverage, count: 0} : beverage))
+    setItems(items.map((item) => item.id === id ? {...item, qty: 0} : item))
+    let sum=0
+    items.forEach(element => {
+      let price = parseFloat(element.price.slice(0,-1))
+      if(id!==element.id) sum += element.qty * price
+    });
+    setCost(sum)
   }
 
-  const submitButton = (id) => {
-
-  }
-
-  const cost = () => {
-
+  const submitButton = () => {
+    //guest.emit("new order",items);
   }
 
   return (
     <Router>
       <div className="container">
-       <h1 style={{textAlign:"center",marginBottom:"3px"}} >Welcome to Rateofu!</h1>
+       
       
       <Routes>
         <Route path="/" element={
           <div>
-            <Beverages drinks={beverages} addButton={addButton} substractButton={substractButton}/>
-            <Dishes dishes={dishes} addButton={addButton} substractButton={substractButton}/>
-            <Order items={order} addButton={addButton} substractButton={substractButton}
-             deleteButton={deleteButton} submitButton={submitButton} cost={cost} />
+            <h1 style={{textAlign:"center",marginBottom:"3px"}} >Welcome to Rateofu!</h1>
+            <Beverages drinks={items} addButton={addButton} substractButton={substractButton}/>
+            <Dishes dishes={items} addButton={addButton} substractButton={substractButton}/>
+            <Order items={items} addButton={addButton} substractButton={substractButton}
+             deleteButton={deleteButton} submitButton={submitButton} cost={cost}/>
           </div>
         } />
+        <Route path="/waiting" element={
+          <div>
+            <h2 className='coloredH2'>Your order is being prepared!</h2>
+            <FinalizedOrder items={items}/>
+          </div>
+        }/>
         <Route path="/login" element={
-          <p>a</p>
+          <div>
+            <Login/>
+          </div>
         }/>
         <Route path="/staff" element={
           <p>a</p>
