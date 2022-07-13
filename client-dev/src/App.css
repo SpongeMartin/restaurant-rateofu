@@ -14,15 +14,49 @@
 .beverage{
   padding-bottom: 30px;
 }
-.inline-table{
+.inline > p, h2, h3{
   display:inline-table;
+  margin-left: 40px;
 }
-.addbutton{
+.inline > input, button{
+  margin-left: 40px;
+}
+.addButton{
   background-color: rgb(100, 162, 6);
   color:aliceblue;
   border-radius: 15%;
   border-width: 0px;
   text-align: center;
-  width:25px;
-  height: 25px;
+  width: 40px;
+  height: 40px;
+  font-size: 30px;
+  cursor:pointer
+}
+.substractButton{
+  background-color: rgb(219, 16, 16);
+  color:aliceblue;
+  border-radius: 15%;
+  border-width: 0px;
+  text-align: center;
+  width: 40px;
+  height: 40px;
+  font-size: 30px;
+  cursor:pointer;
+}
+.input{
+  width:22px;
+  height:22px;
+  font-size: 16px;
+  text-align: center;
+  padding-top: 3px;
+  user-select: none;
+  outline:none
+}
+.itemsWindow{
+  display:inline-block;
+  width:50%;
+}
+.sumup{
+  display:inline-block;
+  width:49%;
 }

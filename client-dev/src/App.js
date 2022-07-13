@@ -59,9 +59,20 @@ function App() {
     }
   ])
 
-  const addButton = (id) =>{
+  function contains(item){
+    console.log(order)
+    if(order.length<1) return false
+    return(order.filter((items)=>items.id === item.id ? true : false))
+  }
+
+  const addButton = (id,item) => {
     if(id<dishes.length) setDishes(dishes.map((dish) => dish.id === id ? {...dish, count: dish.count+1} : dish))
     else setBeverages(beverages.map((beverage) => beverage.id === id ? {...beverage, count: beverage.count+1} : beverage))
+    if(contains(item)) setOrder(order.map((items) => items.id === item.id ? {...items, count: items.count+1} : items))
+    else {
+      setOrder([...order,item])
+      console.log(order)
+    }
   }
 
   const substractButton = (id) =>{
@@ -69,8 +80,17 @@ function App() {
     else setBeverages(beverages.map((beverage) => beverage.id === id && beverage.count>0 ? {...beverage, count: beverage.count-1} : beverage))
   }
 
-  const inputChange = (id) => {
-    //if(id===1) setDishes(dishes.map((dish) => dish.id === id && dish.count >0 ? {...dish, count: dish.count-1} : dish))
+  const deleteButton = (id) => {
+    if(id<dishes.length) setDishes(dishes.map((dish) => dish.id === id ? {...dish, count: 0} : dish))
+    else setBeverages(beverages.map((beverage) => beverage.id === id ? {...beverage, count: 0} : beverage))
+  }
+
+  const submitButton = (id) => {
+
+  }
+
+  const cost = () => {
+
   }
 
   return (
@@ -81,9 +101,10 @@ function App() {
       <Routes>
         <Route path="/" element={
           <div>
-            <Beverages drinks={beverages} addButton={addButton} substractButton={substractButton} inputChange={inputChange}/>
+            <Beverages drinks={beverages} addButton={addButton} substractButton={substractButton}/>
             <Dishes dishes={dishes} addButton={addButton} substractButton={substractButton}/>
-            <Order items={order}/>
+            <Order items={order} addButton={addButton} substractButton={substractButton}
+             deleteButton={deleteButton} submitButton={submitButton} cost={cost} />
           </div>
         } />
         <Route path="/login" element={

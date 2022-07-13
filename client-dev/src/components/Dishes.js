@@ -5,7 +5,8 @@ const Dishes = (props) => {
         <div className="dishesWindow">  
             <h2 style={{textAlign:"center"}}>Dishes</h2>
             {props.dishes.map((dish) => (
-                <Dish key={dish.id} name={dish.name} price={dish.price}/>
+                <Dish key={dish.id} dish={dish} addButton={props.addButton} 
+                substractButton={props.substractButton}/>
             ))}
         </div>
     )
