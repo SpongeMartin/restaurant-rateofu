@@ -17,7 +17,7 @@ const Order = (props) => {
             <SubstractButton substractButton={props.substractButton} item={item}/>
             <DeleteButton deleteButton={props.deleteButton} item={item}/></div>):void(0)))):(<h3>Please make an order!</h3>)}
          <div className='sumup inline'>
-            <FinalizeOrder cost={props.cost} submitButton={props.submitButton}/>
+            <FinalizeOrder items={props.items} cost={props.cost} submitButton={props.submitButton}/>
          </div>
       </div>
     </div>

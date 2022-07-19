@@ -2,15 +2,13 @@ import './App.css';
 import io from 'socket.io-client';
 import React, {useState,useEffect} from 'react';
 import {BrowserRouter as Router, Route, Routes} from 'react-router-dom';
-import Beverages from './components/mainpath/Beverages'
-import Dishes from './components/mainpath/Dishes'
-import Order from './components/mainpath/Order'
-import FinalizedOrder from './components/waitingpath/FinalizedOrder';
-import Login from './components/Login';
-//import Addtask from './components/AddTask'
-const guest = io.connect("http://localhost:5000/guest")
-
-
+import LoginView from './components/loginpath/LoginView';
+import Barman from './components/staffpath/Barman';
+import Chef from './components/staffpath/Chef';
+import Waiter from './components/staffpath/Waiter';
+import MainView from './components/mainpath/MainView';
+import WaitingView from './components/waitingpath/WaitingView';
+import StaffView from './components/staffpath/StaffView';
 
 function App() {
   const [location,setLocation] = useState(["/"])
@@ -67,6 +65,16 @@ function App() {
   ])
   
   const [cost,setCost] = useState(0)
+  const [guest,setGuest] = useState(0)
+  const [staff,setStaff] = useState(0)
+
+  useEffect(()=>{
+  if((location==="/" || location==="/waiting") && (guest === 0 || guest.connected === false)){
+    console.log(location)
+    setGuest(io.connect("http://localhost:5000/guest"))
+  }else if((location === "/login" || location ==="/staff") && (staff === 0 || staff.connected === false)){
+    setStaff(io.connect("http://localhost:5000/staff"))
+  }},[location])
 
   const addButton = (id) => {
     setItems(items.map((item) => item.id === id ? {...item, qty: item.qty+1} : item))
@@ -100,38 +108,40 @@ function App() {
     setCost(sum)
   }
 
+
   const submitButton = () => {
-    //guest.emit("new order",items);
+    let finishedOrder = items.filter((item)=> item.qty>0)
+    guest.emit("new order",finishedOrder);
+    guest.on("new order confirmed",(orderId)=>{
+      console.log(orderId)
+    })
   }
+
+  
 
   return (
     <Router>
       <div className="container">
-       
-      
       <Routes>
         <Route path="/" element={
-          <div>
-            <h1 style={{textAlign:"center",marginBottom:"3px"}} >Welcome to Rateofu!</h1>
-            <Beverages drinks={items} addButton={addButton} substractButton={substractButton}/>
-            <Dishes dishes={items} addButton={addButton} substractButton={substractButton}/>
-            <Order items={items} addButton={addButton} substractButton={substractButton}
-             deleteButton={deleteButton} submitButton={submitButton} cost={cost}/>
-          </div>
+          <>
+            <MainView setLocation={setLocation} location={location} cost={cost} addButton={addButton} items={items} submitButton={submitButton} deleteButton={deleteButton} substractButton={substractButton} />
+          </>
         } />
         <Route path="/waiting" element={
-          <div>
-            <h2 className='coloredH2'>Your order is being prepared!</h2>
-            <FinalizedOrder items={items}/>
-          </div>
+          <>
+            <WaitingView guest={guest} setLocation={setLocation} location={location} items={items} setItems={setItems}/>
+          </>
         }/>
         <Route path="/login" element={
           <div>
-            <Login/>
+            <LoginView staff={staff} setLocation={setLocation} locationn={location}/>
           </div>
         }/>
         <Route path="/staff" element={
-          <p>a</p>
+          <div>
+            <StaffView staff={staff} setLocation={setLocation} location={location}/>
+          </div>
         }/>
       </Routes>
       </div>

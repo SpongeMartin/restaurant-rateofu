@@ -29,14 +29,13 @@ staffNamespace.on('connection', (socket) => {
   console.log('a staff member connected');
 
   socket.on('login', (creds,fn) => {
-    console.log(creds)
     let name = creds.name;
     let type = creds.type;
 
     RATEOFT.joinStaff(name, type, socket.id);
-    //if (fn) {
-     //   fn({status: 'ok'});
-    //}
+    if (fn) {
+        fn({status: 'ok'});
+    }
   });
 
   socket.on('order item ready', (guestId, orderItem) => {

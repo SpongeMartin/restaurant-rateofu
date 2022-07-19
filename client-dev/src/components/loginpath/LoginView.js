@@ -1,18 +1,22 @@
 import React, { useState,useEffect } from 'react'
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import io from 'socket.io-client'
-const staff=io.connect("http://localhost:5000/staff"); 
+let staff=0;
 
-const Login = () => {
+const Login = ({staff,location,setLocation}) => {
     const [username,setUsername] = useState("")
-    const [usertype,setUsertype] = useState("Chef")
+    const [usertype,setUsertype] = useState("chef")
+    let locationName = useLocation().pathname
+    useEffect(()=>{
+      setLocation(locationName)
+    },[])
 
 
     const login = (user,usertype)=>{
-        let message = {name:user,type:usertype}
-        console.log(message.name)
-        if(user.length>0) staff.emit("login",message,true)
+      let message = {name:user,type:usertype}
+        if(user.length>0) staff.emit("login",message)
     }
+
 
   return (
     <div className="login-wrapper">
@@ -31,7 +35,7 @@ const Login = () => {
             </select>
         </label>
         <div>
-        <Link to="/staff"><button className='login-button' onClick={() => login(username,usertype)}>Submit</button></Link>
+        <Link to="/staff" state={{username:`${username}`, usertype:`${usertype}`}}><button className='login-button' onClick={() => login(username,usertype)}>Submit</button></Link>
         </div>
       </form>
     </div>
